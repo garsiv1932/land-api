@@ -1,0 +1,65 @@
+# Sensitive or high-churn files
+#.idea/**/.idea/dataSources/
+#.idea/**/.idea/dataSources.ids
+#.idea/**/.idea/dataSources.local.xml
+#.idea/**/.idea/sqlDataSources.xml
+#.idea/**/.idea/dynamic.xml
+#.idea/**/.idea/uiDesigner.xml
+#.idea/**/.idea/dbnavigator.xml
+.idea/*.iws
+.idea/**/.idea/workspace.xml
+.idea/**/.idea/tasks.xml
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# .vscode
+.vscode/*
+
+# .vs
+./vs/*
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual Studio Trace Files
+*.e2e
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!?*.[Cc]ache/
+
+
+# Installshield output folder
+[Ee]xpress/
+
+# NuGet Packages
+*.nupkg
+# NuGet Symbol Packages
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+web.config
