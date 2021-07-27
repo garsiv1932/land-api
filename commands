@@ -1,0 +1,22 @@
+dotnet ef migrations add JWTImplementation -o Migrations -c ApiContext --project ../Domain/Domain.csproj --verbose
+
+
+dotnet ef database update 20210722113420_JWTImplementation -c ApiContext -p ../Domain/Domain.csproj -s Api.csproj --no-build --verbose
+
+
+dotnet ef migrations remove --project ../Domain/Domain.csproj
+
+dotnet ef migrations list
+
+
+dotnet ef migrations script -o script.sql
+
+
+https://www.youtube.com/watch?v=_hy7lD9Mngw
+
+
+https://hbhhathorn.medium.com/install-an-asp-net-core-web-api-on-linux-ubuntu-18-04-and-host-with-nginx-and-ssl-2ed9df7371fb
+
+
+
+/media/garsiv/mis-datos/Proyectos/landpage/land-api/Api/bin/Release/net5.0/publish/
