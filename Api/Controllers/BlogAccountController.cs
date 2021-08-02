@@ -1,23 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Api.DTOs;
 using Api.Model;
 using Api.SRVs;
 using Api.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 
 namespace Api.Controllers
 {
     [ApiController]
     [Route("api/cuentas")]
-    public class BlogAccountController
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class BlogAccountController:ControllerBase
     {
         private readonly Service_Blog_User _blogUserService;
         private readonly IConfiguration _configuration;
@@ -30,7 +29,7 @@ namespace Api.Controllers
         
         
         [HttpPost("Register")]
-        public async Task<ActionResult<DTO_Blog_User_AuthAnswer>> Register(DTO_Blog_User userToCreate)
+        public async Task<ActionResult<DTO_Blog_AuthAnswer>> Register([FromHeader] DTO_Blog_User userToCreate)
         {
             if (userToCreate != null)
             {
@@ -40,11 +39,21 @@ namespace Api.Controllers
                     {
                         if (!await _blogUserService.userExist(userToCreate))
                         {
-                            Blog_User user_created = await _blogUserService.createUser(userToCreate);
+                            Web_User user_created = await _blogUserService.createUser(userToCreate);
 
                             if (user_created != null)
                             {
-                                return TokenConstructor(userToCreate);
+                                try
+                                {
+                                    DTO_Blog_AuthAnswer answer = _blogUserService.createUserJWT(userToCreate.Email, _configuration["JwtKey"]);
+                                    return Ok(answer);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    return BadRequest(e.Message);
+                                }
+
                             }
                             return new BadRequestObjectResult(Errors.unknown_error);
                         }
@@ -56,18 +65,27 @@ namespace Api.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<DTO_Blog_User_AuthAnswer>> Login(DTO_Blog_User user)
+        public async Task<ActionResult<DTO_Blog_AuthAnswer>> Login(DTO_Blog_User user)
         {
             if (user != null)
             {
-                Blog_User userlogin = await _blogUserService.userLogin(user);
-
-                if ( userlogin != null)
+                try
                 {
-                    return TokenConstructor(user);
-                }
+                    Web_User userlogin = await _blogUserService.userLogin(user);
 
-                return new BadRequestObjectResult(Errors.user_not_authorized);
+                    if ( userlogin != null)
+                    {
+                        return Ok(_blogUserService.createUserJWT(user.Email, _configuration["JwtKey"]));
+                    }
+
+                    return new BadRequestObjectResult(Errors.user_not_authorized);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+;
             }
 
             return new BadRequestObjectResult(Errors.unknown_error);
@@ -82,28 +100,13 @@ namespace Api.Controllers
             }
             return new BadRequestObjectResult(Errors.unknown_error);
         }
+
+
         
 
-        private DTO_Blog_User_AuthAnswer TokenConstructor(DTO_Blog_User user_credentials)
-        {
-            var claim = new List<Claim>()
-            {
-                new Claim("Email", user_credentials.Email)
-            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddYears(1);
 
-            var securityToken = 
-                new JwtSecurityToken(issuer:null, audience: null, claims:claim, expires: expiration, signingCredentials:creds);
-
-            return new DTO_Blog_User_AuthAnswer()
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-                Expiration = expiration
-            };
-        }
+        
     }
 }

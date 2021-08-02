@@ -39,6 +39,8 @@ namespace Api
             {
                 services.AddDbContext<ApiContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApiConnection_Prod")));
             }
+            
+            services.AddCors();
 
             services.AddDbContext<ApiContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApiConnection_Prod")));
             services.AddAutoMapper(typeof(Startup));
@@ -62,7 +64,9 @@ namespace Api
 
             services.AddTransient<Service_Blog_Article>();
             services.AddTransient<Service_Blog>();
+            services.AddSingleton<IConfiguration>(provider => Configuration);
             
+            // services.AddCors();
             //Configurando Swagger para que soporte JWT 
             services.AddSwaggerGen(c =>
             {
@@ -102,6 +106,10 @@ namespace Api
 
             }
             
+            app.UseCors(
+                options => options.WithOrigins("http://localhost:3000").AllowAnyMethod()
+            );
+            
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             
@@ -116,6 +124,8 @@ namespace Api
             app.UseRouting();
 
             app.UseAuthorization();
+            
+
 
             app.UseEndpoints(endpoints =>
             {

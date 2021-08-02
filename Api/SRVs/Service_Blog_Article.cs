@@ -6,6 +6,7 @@ using Api.DTOs;
 using Api.Utilities;
 using Api.Context;
 using Api.Model;
+using AutoMapper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Services.SRVs;
 
@@ -15,25 +16,25 @@ namespace Api.SRVs
     {
         public async Task<List<DTO_Blog_Article>> get_DTO_Articles_ByLink(string link)
         {
-            List<Blog_Article> articles = new List<Blog_Article>();
-            List<Blog_User> users = await getUsersByBlogLink(link);
+            List<Web_Resource_Blog_Article> articles = new List<Web_Resource_Blog_Article>();
+            List<Web_User> users = await getUsersByBlogLink(link);
 
             foreach (var usr in users)
             {
                 articles.AddRange(usr.Articles);
             }
             
-            return Utls.mapper.Map<List<Blog_Article>, List<DTO_Blog_Article> >(articles);
+            return Utls.mapper.Map<List<Web_Resource_Blog_Article>, List<DTO_Blog_Article> >(articles);
         }
 
-        private IEnumerable<Blog_Article> get_Artycles_FromUser(string usrEmail)
+        private IEnumerable<Web_Resource_Blog_Article> get_Artycles_FromUser(string usrEmail)
         {
             return _context.Db_Articles.Where(e => e.User.Email == usrEmail);
         }
 
         public async Task<List<DTO_Blog_Article>> get_DTO_Artycles_FromUser(string email)
         {
-            Blog_User user = await _context.Db_Blog_User.Where(e => e.Email == email).SingleOrDefaultAsync();
+            Web_User user = await _context.Db_Blog_User.Where(e => e.Email == email).SingleOrDefaultAsync();
             return Utls.mapper.Map<List<DTO_Blog_Article>>(user.Articles) ;
         }
 
@@ -42,24 +43,24 @@ namespace Api.SRVs
             
         }
 
-        public Service_Blog_Article(ApiContext context) : base(context)
+        public Service_Blog_Article(ApiContext context, IConfiguration configuration) : base(context, configuration)
         {
             
         }
 
 
-        public async Task<List<DTO_Blog_Article_Comment>> getCommentsByArticleID(DateTime articleId)
+        public async Task<List<DTO_Blog_Article_Comment>> getCommentsByArticleID(string articleLink)
         {
-            Blog_Article article =await _context.Db_Articles.Where(e => e.Blog_Article_Id == articleId).SingleAsync();
-            return Utls.mapper.Map<List<DTO_Blog_Article_Comment>>(article.Comments);
+            Web_Resource_Blog_Article resourceBlogArticle =await _context.Db_Articles.Where(e => e.Article_Link == articleLink).SingleAsync();
+            return Utls.mapper.Map<List<DTO_Blog_Article_Comment>>(resourceBlogArticle.Comments);
         }
 
-        public async Task<bool> articleExist(DateTime articleId)
+        public async Task<bool> articleExist(string articleLink)
         {
-            Blog_Article article = await _context.Db_Articles.Where(e => e.Blog_Article_Id == articleId)
+            Web_Resource_Blog_Article resourceBlogArticle = await _context.Db_Articles.Where(e => e.Article_Link == articleLink)
                 .SingleOrDefaultAsync();
 
-            if (article != null)
+            if (resourceBlogArticle != null)
             {
                 return true;
             }
