@@ -23,21 +23,21 @@ namespace Api.Context
                 Web_User pablo_admin = new Web_User("PABLO", "ENRIQUE", "LLORACH", "PAZ", "llorach.pablo@llorachdevs.com", "llorach.pablo@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211845", llorachdevs, admin_role);
                 Web_User enrique_user = new Web_User("ENRIQUE", "PAZ", "", "", "enrique.paz@llorachdevs.com", "enrique.paz@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211846", llorachdevs, user_role);
                 
-                Web_Resource_Blog_Article formik = new();
+                Web_Article formik = new();
                 formik.Article_Link = "https://garsiv1932.github.io/formik/";
                 formik.Image = "https://www.llorachdevs.com/static/media/formik.1abe3c8d.png";
                 formik.Tittle = "Creando Formularios con Formik";
                 formik.User = pablo_admin;
                 formik.Blog_User_Email = pablo_admin.Email;
 
-                Web_Resource_Blog_Article nagios = new();
+                Web_Article nagios = new();
                 nagios.Article_Link = "https://garsiv1932.github.io/nagios-mikrotik-ssh/";
                 nagios.Image = "https://www.llorachdevs.com/static/media/Dibujo.f498333c.jpg";
                 nagios.Tittle = "Alertas de tus Mikrotiks en Nagios";
                 nagios.User = pablo_admin;
                 nagios.Blog_User_Email = pablo_admin.Email;
 
-                Web_Resource_Blog_Article ipmi = new();
+                Web_Article ipmi = new();
                 ipmi.Article_Link = "https://garsiv1932.github.io/nagios-ipmi/";
                 ipmi.Image = "https://www.llorachdevs.com/static/media/IPMI.6975eb1c.jpg";
                 ipmi.User = pablo_admin;
@@ -45,14 +45,14 @@ namespace Api.Context
                 ipmi.Publish_Date = DateTime.Now.AddYears(-1);
                 ipmi.Tittle = "Alertas del Hardware de tu server mediante IPMI";
                 
-                Web_Resource_Blog_Article_Comment ipmi_comment_uno = new Web_Resource_Blog_Article_Comment();
+                Web_Article_Comment ipmi_comment_uno = new Web_Article_Comment();
                 ipmi_comment_uno.User = enrique_user;
                 ipmi_comment_uno.User_Email = enrique_user.Email;
                 ipmi_comment_uno.Comment = "Muy bueno";
                 ipmi_comment_uno.Published = DateTime.Now.AddDays(-3);
                 ipmi_comment_uno.Ip_Address = "192.168.0.1";
                 
-                Web_Resource_Blog_Article_Comment ipmi_comment_dos = new Web_Resource_Blog_Article_Comment();
+                Web_Article_Comment ipmi_comment_dos = new Web_Article_Comment();
                 ipmi_comment_dos.User = enrique_user;
                 ipmi.Blog_User_Email = enrique_user.Email;
                 ipmi_comment_dos.Comment = "Una porqueria";
@@ -61,13 +61,13 @@ namespace Api.Context
 
                 ipmi.Comments.Add(ipmi_comment_uno);
                 ipmi.Comments.Add(ipmi_comment_dos);
-
+                
                 pablo_admin.Articles.Add(formik);
                 pablo_admin.Articles.Add(nagios);
                 pablo_admin.Articles.Add(ipmi);
                 
-                llorachdevs.Blog_Users.Add(pablo_admin);
-                context.Db_Blogs.Add(llorachdevs);
+                llorachdevs.users.Add(pablo_admin);
+                context.Db_Webs.Add(llorachdevs);
                 
                 context.SaveChanges();
             }

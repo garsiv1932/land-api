@@ -11,7 +11,7 @@ namespace Api.Model
 
         public string country { get; set; }
         public string country_code { get; set; }
-        public Web_Resource recurso_visitado { get; set; }
+        public string recurso_visitado { get; set; }
 
         public Web_Visit(int blogVisitId, string ipAddr, DateTime visitDate)
         {

@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Api.Context;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Services.SRVs;
 
 namespace Api
 {
@@ -56,7 +50,7 @@ namespace Api
                     //     .UseUrls("http://*:5000")
                     //     .UseStartup<Startup>();
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel(e => e.ListenAnyIP(5000));
+                    // webBuilder.UseKestrel(e => e.ListenAnyIP(5000));
                 });
     }
 }

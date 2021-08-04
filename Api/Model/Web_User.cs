@@ -18,15 +18,17 @@ namespace Api.Model
 
         public string Site_Link { get; set; }
         public Web Web { get; set; }
+
+        public string cv_link { get; set; }
         
         public int Blog_User_Role_Id { get; set; }
         public Web_User_Role Role { get; set; }
-        public List<Web_Resource_Blog_Article> Articles { get; set; }
+        public List<Web_Article> Articles { get; set; }
         
-        public List<Web_Resource_Blog_Article_Comment> Comments { get; set; }
+        public List<Web_Article_Comment> Comments { get; set; }
 
         
-        public List<Web_Resource_Blog_Article> getArticles()
+        public List<Web_Article> getArticles()
         {
             return this.Articles;
         }
@@ -45,7 +47,7 @@ namespace Api.Model
             Access_Failed_Count = 0;
             Web = web;
             Role = role;
-            Articles = new List<Web_Resource_Blog_Article>();
+            Articles = new List<Web_Article>();
         }
 
         public Web_User()

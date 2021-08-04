@@ -9,14 +9,14 @@ namespace Api.Context
 {
     public class ApiContext:DbContext
     {
-        public DbSet<Web> Db_Blogs { get; set; }
-        public DbSet<Web_Resource_Blog_Article> Db_Articles { get; set; }
+        public DbSet<Web> Db_Webs { get; set; }
+        public DbSet<Web_Article> Db_Articles { get; set; }
         
-        public DbSet<Web_Resource_Blog_Article_Comment> Db_Article_Comments { get; set; }
+        public DbSet<Web_Article_Comment> Db_Article_Comments { get; set; }
 
-        public DbSet<Web_User> Db_Blog_User { get; set; }
+        public DbSet<Web_User> Db_Web_User { get; set; }
 
-        public DbSet<Web_Visit> Db_Blog_Visit { get; set; }
+        public DbSet<Web_Visit> Db_Web_Visit { get; set; }
 
         public DbSet<Web_User_Role> Db_Blog_User_Role { get; set; }
         
@@ -66,22 +66,17 @@ namespace Api.Context
 
             modelBuilder.Entity<Web_User>(entity =>
             {
-                modelBuilder.Entity<Web_User>()
-                    .Property( e => e.Email)
-                    .ValueGeneratedNever();
+                // modelBuilder.Entity<Web_User>()
+                //     .Property( e => e.Email)
+                //     .ValueGeneratedNever();
                 
                 entity.HasKey(e => e.Email)
                     .HasName("PK_Blog_User");
                 
                 entity.HasOne(e => e.Web)
-                    .WithMany(e => e.Blog_Users)
+                    .WithMany(e => e.users)
                     .HasForeignKey(e => e.Site_Link)
                     .HasPrincipalKey(e => e.Site_Link);
-                
-                entity.Property(e => e.Email)
-                    .IsRequired();
-                entity.HasIndex(e => e.Email)
-                    .IsUnique();
                 
                 entity.Property(e => e.First_Name)
                     .IsRequired();
@@ -114,12 +109,12 @@ namespace Api.Context
                     .HasMaxLength(100);
                 
                 entity.Property(b => b.Secret)
-                    .HasMaxLength(100);
+                    .HasMaxLength(150);
             });
         
-            modelBuilder.Entity<Web_Resource_Blog_Article>(entity =>
+            modelBuilder.Entity<Web_Article>(entity =>
             {
-                modelBuilder.Entity<Web_Resource_Blog_Article>()
+                modelBuilder.Entity<Web_Article>()
                     .Property( e =>e.Article_Link)
                     .ValueGeneratedNever();
                 
@@ -150,7 +145,7 @@ namespace Api.Context
                     .IsRequired();
             });
         
-            modelBuilder.Entity<Web_Resource_Blog_Article_Comment>(entity =>
+            modelBuilder.Entity<Web_Article_Comment>(entity =>
             {
                 entity.ToTable("Blog_Article_Comments");
                 entity.HasKey(e => new {e.User_Email, e.Published})

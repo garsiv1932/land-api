@@ -8,20 +8,28 @@ namespace Api.Model
     {
         public string Site_Link { get; set; }
         public string Name { get; set; }
-        public JwtSecurityToken Secret { get; set; }
+        public string Secret { get; set; }
 
-        public List<Web_User> Blog_Users { get; set; }
+
+        public List<Web_User> users { get; set; }
+        
 
         public Web( string pName, string pSiteLink)
         {
             Site_Link = pSiteLink;
             Name = pName;
-            Blog_Users = new List<Web_User>();
+            users = new List<Web_User>();
         }
 
         public Web()
         {
-            Blog_Users = new List<Web_User>();
+            users = new List<Web_User>();
+        }
+
+        public Web(string link)
+        {
+            Site_Link = link;
+            users = new List<Web_User>();
         }
     }
 }

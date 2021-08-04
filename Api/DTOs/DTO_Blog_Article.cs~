@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="634d1591-f324-42a0-bd54-9c3b10ad3ca3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Components/RadialMenu/RadialMenu.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Components/RadialMenu/RadialMenu.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Login/Login.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Login/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false

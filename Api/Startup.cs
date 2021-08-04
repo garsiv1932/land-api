@@ -2,16 +2,20 @@ using System;
 using System.Text;
 using Api.Context;
 using Api.SRVs;
+using Api.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Services.SRVs;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 
 namespace Api
 {
@@ -29,7 +33,6 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             // services.AddScoped<IdentityDbContext, ApiContext>();
             
             if (_env.IsDevelopment())
@@ -40,9 +43,6 @@ namespace Api
                 services.AddDbContext<ApiContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApiConnection_Prod")));
             }
             
-            services.AddCors();
-
-            services.AddDbContext<ApiContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApiConnection_Prod")));
             services.AddAutoMapper(typeof(Startup));
 
             /*
@@ -53,7 +53,7 @@ namespace Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer( options => options.TokenValidationParameters = new TokenValidationParameters
                 {
-                ValidateIssuer    = false,
+                ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
@@ -62,15 +62,42 @@ namespace Api
                 ClockSkew = TimeSpan.Zero
                 });
 
-            services.AddTransient<Service_Blog_Article>();
-            services.AddTransient<Service_Blog>();
-            services.AddSingleton<IConfiguration>(provider => Configuration);
+            services.AddTransient<Service_Web_Article>();
+            services.AddTransient<Service_Web>();
+            services.AddTransient<Service_Web_Visit>();
+            services.AddTransient<Service_Web_User>();
+            // services.AddSingleton<IConfiguration>(provider => Configuration);
             
-            // services.AddCors();
-            //Configurando Swagger para que soporte JWT 
+            services.AddControllers();
+            
+            services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
+            services.AddSwaggerGen();
+
             services.AddSwaggerGen(c =>
             {
+                c.TagActionsBy(api =>
+                {
+                    if (api.GroupName != null)
+                    {
+                        return new[] { api.GroupName };
+                    }
+                
+                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor != null)
+                    {
+                        return new[] { controllerActionDescriptor.ControllerName };
+                    }
+                
+                    throw new InvalidOperationException("Unable to determine tag for endpoint.");
+                });
+                c.DocInclusionPredicate((name, api) => true); 
+                
+                
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+                c.EnableAnnotations();
+                
+            
+                //Configurando Swagger para que soporte JWT 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -94,8 +121,6 @@ namespace Api
                     }
                 });
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,9 +131,9 @@ namespace Api
 
             }
             
-            app.UseCors(
-                options => options.WithOrigins("http://localhost:3000").AllowAnyMethod()
-            );
+            // app.UseCors(
+            //     options => options.WithOrigins("http://localhost:3000").AllowAnyMethod()
+            // );
             
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -116,6 +141,7 @@ namespace Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1");
+                //Dont show scheemes on Swagger UI
                 c.DefaultModelsExpandDepth(-1);
             });
             
