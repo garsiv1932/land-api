@@ -1,7 +1,0 @@
-namespace Api.DTOs
-{
-    public class DTO_Login
-    {
-        
-    }
-}
