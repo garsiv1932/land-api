@@ -6,12 +6,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Api.DTOs;
 using Api.Model;
-using AutoMapper;
 using Api.Context;
 using Api.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Services.SRVs;
 
 namespace Api.SRVs
 {
@@ -84,6 +82,7 @@ namespace Api.SRVs
         
         public async Task<Web_User> userLogin(DTO_Login creds)
         {
+            Console.WriteLine(_configuration["ApiConnection_Prod"]);
             Web_User user_login = null;
             if (creds != null)
             {

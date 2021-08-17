@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Api.Model;
+using AutoMapper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -19,9 +20,8 @@ namespace Api.Context
         public DbSet<Web_Visit> Db_Web_Visit { get; set; }
 
         public DbSet<Web_User_Role> Db_Blog_User_Role { get; set; }
-        
-        
 
+       
         public ApiContext(DbContextOptions<ApiContext> options) : base(options)
         {
             

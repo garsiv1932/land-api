@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Api.Context;
 using Api.Model;
-using Api.SRVs;
 using Api.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +15,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 
-namespace Services.SRVs
+namespace Api.SRVs
 {
-    public abstract class Service : IDisposable, IService
+    public abstract class Service : IService
     {
-        private readonly IConfiguration _configuration;
+        public readonly IConfiguration _configuration;
 
         protected ApiContext _context { get; }
 
@@ -51,17 +50,13 @@ namespace Services.SRVs
                 string decodedUrl = HttpUtility.UrlDecode(blog_link);
                 try
                 {
-                    // List<Web_User> users = await _context.Db_Web_User
-                    //     .Include(e => e.Web)
-                    //     .Include(e => e.Articles)
-                    //     .Where(e => e.Site_Link == decodedUrl).ToListAsync();
-
                     Web web = await _context.Db_Webs
                         .Include(e => e.users)
                         .ThenInclude(e => e.Articles)
                         .ThenInclude(e => e.Comments)
                         .Where(e => e.Site_Link == blog_link)
                         .SingleOrDefaultAsync();
+                    //To Do: Return error si no es encontrado nada 
                     return web.users;
                 }
                 catch (Exception e)
@@ -76,18 +71,40 @@ namespace Services.SRVs
     
         public string TokenConstructor(List<Claim> claimList, DateTime expiration )
         {
-            string answer = string.Empty;
-            if (claimList != null && expiration > DateTime.Today)
+            if (claimList != null && expiration > DateTime.Now)
             {
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                string answer = string.Empty;
+                if (claimList != null && expiration > DateTime.Today)
+                {
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                JwtSecurityToken securityToken = 
-                    new JwtSecurityToken(issuer:null, audience: null, claims:claimList, expires: expiration, signingCredentials:creds);
+                    JwtSecurityToken securityToken = 
+                        new JwtSecurityToken(issuer:null, audience: null, claims:claimList, expires: expiration, signingCredentials:creds);
 
-                answer = new JwtSecurityTokenHandler().WriteToken(securityToken);
+                    answer = new JwtSecurityTokenHandler().WriteToken(securityToken);
+                }
+                return answer;
             }
-            return answer;
+            throw new Exception(Errors.unknown_error);
+        }
+
+
+        
+        public async Task<List<Web_User>> usersByWebLink(string link)
+        {
+            if (!string.IsNullOrWhiteSpace(link))
+            {
+                Web site = await _context.Db_Webs
+                    .Include(e => e.users)
+                    .ThenInclude(e => e.Articles)
+                    .Where(e => e.Site_Link == link)
+                    .SingleAsync();
+
+                return site.users;
+            }
+
+            throw new Exception(Errors.unknown_error);
         }
     }
 }

@@ -1,19 +1,30 @@
 using System;
 using Api.Model;
+using Api.SRVs;
+using AutoMapper.Configuration;
 
 
 namespace Api.Context
 {
     public class DbInitializer
     {
-        public static void Initialize(ApiContext context) {
-            bool init = context.Database.EnsureCreated();
+        private readonly Service_Web _serviceWeb;
+        private readonly ApiContext _context;
+
+        public DbInitializer(Service_Web serviceWeb,ApiContext context)
+        {
+            _serviceWeb = serviceWeb;
+            _context = context;
+        }
+        public  void Initialize() {
+            bool init = _context.Database.EnsureCreated();
 
             if (init)
             {
                 Web llorachdevs = new Web("llorachdevs", "https://www.llorachdevs.com");
 
-                
+                llorachdevs.Secret = _serviceWeb.TokenCreator(llorachdevs.Site_Link);
+
                 Web_User_Role admin_role = new Web_User_Role(DateTime.Now,"ADMIN");
                 Web_User_Role user_role = new Web_User_Role(DateTime.Now,"USER");
 
@@ -67,9 +78,9 @@ namespace Api.Context
                 pablo_admin.Articles.Add(ipmi);
                 
                 llorachdevs.users.Add(pablo_admin);
-                context.Db_Webs.Add(llorachdevs);
+                _context.Db_Webs.Add(llorachdevs);
                 
-                context.SaveChanges();
+                _context.SaveChanges();
             }
         }
 

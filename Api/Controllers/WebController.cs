@@ -20,13 +20,11 @@ namespace Api.Controllers
     public class WebController : Controller
     {
         private readonly Service_Web _serviceWeb;
-        private readonly IConfiguration _configuration;
 
 
-        public WebController(Service_Web serviceWeb, IConfiguration configuration)
+        public WebController(Service_Web serviceWeb)
         {
             _serviceWeb = serviceWeb;
-            _configuration = configuration;
         }
 
         [HttpPost("{name}/{address_link}")]
@@ -41,17 +39,11 @@ namespace Api.Controllers
         public async Task<ActionResult<DTO_Web>> GetBlogByLink([FromHeader] string web_link)
         {
             DTO_Web entries = new();
-
-            using (Service_Web serviceWeb = _serviceWeb)
-            {
-                entries = await serviceWeb.getBlogsByLink(web_link);
-            }
-
+            entries = await _serviceWeb.getBlogsByLink(web_link);
             if (entries == null)
             {
                 return NotFound();
             }
-
             return entries;
         }
 
@@ -61,17 +53,11 @@ namespace Api.Controllers
         public async Task<ActionResult<DTO_Web>> GetBlogs()
         {
             DTO_Web entries = new();
-
-            using (Service_Web serviceWeb = _serviceWeb)
-            {
-                entries = await serviceWeb.getBlogs();
-            }
-
+            entries = await _serviceWeb.getBlogs();
             if (entries == null)
             {
                 return NotFound();
             }
-
             return entries;
         }
 
@@ -79,21 +65,19 @@ namespace Api.Controllers
         [Route("jwt-site")]
         public async Task<ActionResult<DTO_Web_AuthAnswer>> CreateNewWebJWT([FromHeader] string web_link)
         {
-            if (string.IsNullOrWhiteSpace(web_link))
+            if (!string.IsNullOrWhiteSpace(web_link))
             {
-                using (_serviceWeb)
+                try
                 {
-                    try
-                    {
-                        DTO_Web_AuthAnswer authAnswer = await _serviceWeb.AddJwtToSite(web_link);
-                        return authAnswer;
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        return BadRequest(e.Message);
-                    }
+                    DTO_Web_AuthAnswer authAnswer = await _serviceWeb.AddJwtToSite(web_link);
+                    return authAnswer;
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return BadRequest(e.Message);
+                }
+
             }
             return BadRequest(Errors.unknown_error);
         }

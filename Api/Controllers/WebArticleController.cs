@@ -31,21 +31,27 @@ namespace Api.Controllers
             if (!string.IsNullOrWhiteSpace(web_link))
             {
                 List<DTO_Web_Article> entries = new();
-
-                using (_serviceWebArticle)
-                {
-                    entries = await _serviceWebArticle.get_DTO_Articles_ByLink(HttpUtility.UrlDecode(web_link));
-                }
-
+                entries = await _serviceWebArticle.get_DTO_Articles_ByLink(HttpUtility.UrlDecode(web_link));
                 if (entries == null)
                 {
                     return NotFound();
                 }
-
                 return entries;
             }
 
             return BadRequest(Errors.wrong_attributes);
+        }
+
+        [HttpGet("cantidad")]
+        public async Task<ActionResult<int>> getCantidadArticulos([FromHeader] string link)
+        {
+            if (!string.IsNullOrWhiteSpace(link))
+            {
+                int cantidadArticulos = await _serviceWebArticle.cantidadArticulos(link);
+                return cantidadArticulos;                
+            }
+
+            return BadRequest(Errors.element_not_found);
         }
 
         [HttpGet("article_link")]

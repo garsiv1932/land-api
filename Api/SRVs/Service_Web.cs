@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ using Api.Model;
 using Api.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Services.SRVs;
+
 
 namespace Api.SRVs
 {
@@ -39,18 +38,6 @@ namespace Api.SRVs
 
         }
         
-        public string GetWeatherDisplay(double tempInCelsius) => tempInCelsius < 20.0 ? "Cold." : "" ;
-
-        public Web GetWeatherDisplay2(double tempInCelsius)
-        {
-            if (tempInCelsius < 20.0)
-            {
-                return new Web();
-            }
-
-            return new Web();
-        }
-
         /*
          Sites has their own JWT Key for administragion purposes 
          */
@@ -90,7 +77,7 @@ namespace Api.SRVs
             return null;
         }
         
-        private string TokenConstructor(string website )
+        public string TokenCreator(string website)
         {
             var claimList = new List<Claim>()
             {
@@ -101,7 +88,14 @@ namespace Api.SRVs
             
             return TokenConstructor(claimList, expiration );
         }
-        // Console.WriteLine(GetWeatherDisplay(15));  // output: Cold.
-        // Console.WriteLine(GetWeatherDisplay(27));  // output: Perfect!
+
+        private async Task<Web> webExist(string webSiteLink)
+        {
+            Web website = await _context.Db_Webs.Where(e => e.Site_Link == webSiteLink).SingleOrDefaultAsync();
+            
+            return website;
+        }
+
+
     }
 }

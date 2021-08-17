@@ -6,6 +6,7 @@ using Api.DTOs;
 using Api.Utilities;
 using Api.Context;
 using Api.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Services.SRVs;
@@ -14,16 +15,25 @@ namespace Api.SRVs
 {
     public class Service_Web_Article:Service
     {
-
-
         public async Task<List<DTO_Web_Article>> get_DTO_Articles_ByLink(string link)
         {
             List<Web_Article> articles = new List<Web_Article>();
-            List<Web_User> users = await getUsersByBlogLink(link);
-
-            foreach (var usr in users)
+ 
+            if (!string.IsNullOrWhiteSpace(link))
             {
-                articles.AddRange(usr.Articles);
+                List<Web_User> users = await getUsersByBlogLink(link);
+
+                if (users != null)
+                {
+                    foreach (var usr in users)
+                    {
+                        articles.AddRange(usr.Articles);
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
             
             return Utls.mapper.Map<List<Web_Article>, List<DTO_Web_Article>>(articles);
@@ -31,7 +41,11 @@ namespace Api.SRVs
 
         private IEnumerable<Web_Article> get_Artycles_FromUser(string usrEmail)
         {
-            return _context.Db_Articles.Where(e => e.User.Email == usrEmail);
+            if (!string.IsNullOrWhiteSpace(usrEmail))
+            {
+                return _context.Db_Articles.Where(e => e.User.Email == usrEmail);
+            }
+            throw new Exception(Errors.unknown_error);
         }
 
         public async Task<List<DTO_Web_Article>> get_DTO_Artycles_FromUser(string email)
@@ -69,6 +83,30 @@ namespace Api.SRVs
 
             return false;
 
+        }
+
+        public async Task<int> cantidadArticulos(string link)
+        {
+            if (!string.IsNullOrWhiteSpace(link))
+            {
+                int cantidad = 0;
+                List<Web_User> users = await usersByWebLink(link);
+                if (users == null)
+                {
+                    throw new Exception(Errors.element_not_found);
+                }
+                else
+                {
+                    foreach (Web_User user in users)
+                    {
+                        cantidad += user.Articles.Count;
+                    }
+
+                    return cantidad;
+                }
+            }
+
+            throw new Exception(Errors.unknown_error);
         }
     }
 }

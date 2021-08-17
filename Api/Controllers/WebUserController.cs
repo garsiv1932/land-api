@@ -8,6 +8,7 @@ using Api.SRVs;
 using Api.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,7 @@ namespace Api.Controllers
         private readonly Service_Web_User _webUserService;
         private readonly IConfiguration _configuration;
 
-        public WebUserController( Service_Web_User webUserService, IConfiguration configuration)
+        public WebUserController(Service_Web_User webUserService, IConfiguration configuration)
         {
             _webUserService = webUserService;
             _configuration = configuration;
@@ -36,32 +37,28 @@ namespace Api.Controllers
         {
             if (userToCreate != null)
             {
-                using (_webUserService)
+                if (_webUserService.passwordValid(userToCreate.Password))
                 {
-                    if (_webUserService.passwordValid(userToCreate.Password))
+                    if (!await _webUserService.userExist(userToCreate))
                     {
-                        if (!await _webUserService.userExist(userToCreate))
+                        Web_User user_created = await _webUserService.createUser(userToCreate);
+
+                        if (user_created != null)
                         {
-                            Web_User user_created = await _webUserService.createUser(userToCreate);
-
-                            if (user_created != null)
+                            try
                             {
-                                try
-                                {
-                                    DTO_Web_AuthAnswer answer = _webUserService.createUserJWT(userToCreate.Email);
-                                    return Ok(answer);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    return BadRequest(e.Message);
-                                }
-
+                                DTO_Web_AuthAnswer answer = _webUserService.createUserJWT(userToCreate.Email);
+                                return Ok(answer);
                             }
-                            return new BadRequestObjectResult(Errors.unknown_error);
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                return BadRequest(e.Message);
+                            }
                         }
-                        return new BadRequestObjectResult(Errors.emailExist(userToCreate.Email));
+                        return new BadRequestObjectResult(Errors.unknown_error);
                     }
+                    return new BadRequestObjectResult(Errors.emailExist(userToCreate.Email));
                 }
             }
             return new BadRequestObjectResult(Errors.unknown_error);
@@ -71,6 +68,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<DTO_Web_AuthAnswer>> Login([FromBody]DTO_Login creds)
         {
+            Console.WriteLine(_configuration["ApiConnection_Prod"]);
             if (creds != null)
             {
                 try

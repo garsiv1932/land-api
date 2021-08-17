@@ -33,6 +33,8 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            
             // services.AddScoped<IdentityDbContext, ApiContext>();
             
             if (_env.IsDevelopment())
@@ -50,6 +52,8 @@ namespace Api
             Aqui configuramos el servicio que toma el token que llegue a mi solucion y valide que el JWT que llego
             al sistema fue firmada por nuestra aplicacion
             */
+            
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer( options => options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -66,7 +70,8 @@ namespace Api
             services.AddTransient<Service_Web>();
             services.AddTransient<Service_Web_Visit>();
             services.AddTransient<Service_Web_User>();
-            // services.AddSingleton<IConfiguration>(provider => Configuration);
+            services.AddTransient<DbInitializer>();
+            // services.AddSingleton(Configuration);
             
             services.AddControllers();
             
@@ -126,14 +131,16 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors(e =>
+            {
+                e.AllowAnyOrigin();
+                e.AllowAnyMethod();
+                e.AllowAnyHeader();
+            });
             if (_env.IsDevelopment())
             {
 
             }
-            
-            // app.UseCors(
-            //     options => options.WithOrigins("http://localhost:3000").AllowAnyMethod()
-            // );
             
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -145,18 +152,23 @@ namespace Api
                 c.DefaultModelsExpandDepth(-1);
             });
             
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-            
-
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApiContext>();
+                var werbService = serviceScope.ServiceProvider.GetRequiredService<Service_Web>();
+                new DbInitializer(werbService,context).Initialize();
+            }
         }
     }
 }
