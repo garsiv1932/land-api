@@ -13,32 +13,32 @@ using Microsoft.Extensions.Configuration;
 
 namespace Api.SRVs
 {
-    public class Service_Web_User:Service
+    public class ServiceWebUser:Service
     {
-        public Service_Web_User(ApiContext context, IConfiguration configuration):base(context, configuration)
+        public ServiceWebUser(ApiContext context, IConfiguration configuration):base(context, configuration)
         {
         }
 
-        public Service_Web_User()
+        public ServiceWebUser()
         {
             
         }
 
-        public async Task<Web_User> createUser(DTO_Web_User userDTO)
+        public async Task<WebUser> createUser(DtoWebUser userDTO)
         {
-            Web_User user = Utls.mapper.Map<Web_User>(userDTO);
-            var user_created = await _context.Db_Web_User.AddAsync(user);
+            WebUser user = Utls.mapper.Map<WebUser>(userDTO);
+            var user_created = await _context.DbWebUser.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;        
         }
 
 
-        public async Task<bool> userExist(DTO_Web_User user)
+        public async Task<bool> userExist(DtoWebUser user)
         {
             bool exist = false;
             if (user != null)
             {
-                Web_User user_exist = await _context.Db_Web_User.AsQueryable().Where(e => e.Email== user.Email).SingleAsync();
+                WebUser user_exist = await _context.DbWebUser.AsQueryable().Where(e => e.Email== user.Email).SingleAsync();
                 if (user_exist != null)
                 {
                     exist = true;
@@ -48,7 +48,7 @@ namespace Api.SRVs
             return exist;
         }
 
-        public DTO_Web_AuthAnswer createUserJWT(string email)
+        public DtoWebAuthAnswer createUserJWT(string email)
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
@@ -60,7 +60,7 @@ namespace Api.SRVs
 
                 string tokenJWT = TokenConstructor(claims, expirationDate);
 
-                DTO_Web_AuthAnswer answer = new DTO_Web_AuthAnswer()
+                DtoWebAuthAnswer answer = new DtoWebAuthAnswer()
                 {
                     Token = tokenJWT,
                     Expiration = expirationDate
@@ -69,26 +69,26 @@ namespace Api.SRVs
                 return answer;
             }
 
-            throw new Exception(Errors.unknown_error);
+            throw new Exception(Errors.UnknownError);
             return null;
         }
 
-        public async Task<List<DTO_Web_User>> get_DTO_Users_By_BlogLink(string blog_link)
+        public async Task<List<DtoWebUser>> get_DTO_Users_By_BlogLink(string blog_link)
         {
-            List<Web_User> users = await getUsersByBlogLink(blog_link);
+            List<WebUser> users = await getUsersByBlogLink(blog_link);
             
-            return Utls.mapper.Map<List<DTO_Web_User>>(users);
+            return Utls.mapper.Map<List<DtoWebUser>>(users);
         }
         
-        public async Task<Web_User> userLogin(DTO_Login creds)
+        public async Task<WebUser> userLogin(DtoLogin creds)
         {
             Console.WriteLine(_configuration["ApiConnection_Prod"]);
-            Web_User user_login = null;
+            WebUser user_login = null;
             if (creds != null)
             {
                 
-                Web_User aux_user_login = await _context.Db_Web_User.AsQueryable().Where(e => e.Email == creds.username).SingleAsync();
-                bool passverify = BCrypt.Net.BCrypt.Verify(creds.password, aux_user_login.Password_Hash);
+                WebUser aux_user_login = await _context.DbWebUser.AsQueryable().Where(e => e.Email == creds.username).SingleAsync();
+                bool passverify = BCrypt.Net.BCrypt.Verify(creds.password, aux_user_login.PasswordHash);
                 if (aux_user_login != null && passverify)
                 {
                     user_login = aux_user_login;

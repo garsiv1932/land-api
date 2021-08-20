@@ -66,11 +66,12 @@ namespace Api
                 ClockSkew = TimeSpan.Zero
                 });
 
-            services.AddTransient<Service_Web_Article>();
-            services.AddTransient<Service_Web>();
-            services.AddTransient<Service_Web_Visit>();
-            services.AddTransient<Service_Web_User>();
+            services.AddTransient<ServiceArticle>();
+            services.AddTransient<ServiceWeb>();
+            services.AddTransient<ServiceVisit>();
+            services.AddTransient<ServiceWebUser>();
             services.AddTransient<DbInitializer>();
+            services.AddTransient<ServiceLogs>();
             // services.AddSingleton(Configuration);
             
             services.AddControllers();
@@ -166,7 +167,7 @@ namespace Api
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<ApiContext>();
-                var werbService = serviceScope.ServiceProvider.GetRequiredService<Service_Web>();
+                var werbService = serviceScope.ServiceProvider.GetRequiredService<ServiceWeb>();
                 new DbInitializer(werbService,context).Initialize();
             }
         }

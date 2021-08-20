@@ -17,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.SRVs
 {
-    public abstract class Service : IService
+    public abstract class Service
     {
         public readonly IConfiguration _configuration;
 
@@ -34,17 +34,9 @@ namespace Api.SRVs
 
         }
 
-        public void Dispose()
+        public async Task<List<WebUser>> getUsersByBlogLink([FromHeader] string blog_link)
         {
-            if (_context != null)
-            {
-                _context.Dispose();
-            }
-        }
-
-        public async Task<List<Web_User>> getUsersByBlogLink([FromHeader] string blog_link)
-        {
-            
+            List<WebUser> response = null;
             if (!string.IsNullOrWhiteSpace(blog_link))
             {
                 string decodedUrl = HttpUtility.UrlDecode(blog_link);
@@ -53,20 +45,20 @@ namespace Api.SRVs
                     Web web = await _context.Db_Webs
                         .Include(e => e.users)
                         .ThenInclude(e => e.Articles)
-                        .ThenInclude(e => e.Comments)
                         .Where(e => e.Site_Link == blog_link)
                         .SingleOrDefaultAsync();
-                    //To Do: Return error si no es encontrado nada 
-                    return web.users;
+
+                    if (web != null)
+                    {
+                        response = web.users;                        
+                    }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
-                    throw;
+                    throw new Exception(Errors.UnknownError);
                 }
-
             }
-            throw new Exception(Errors.unknown_error);
+            return response;
         }
     
         public string TokenConstructor(List<Claim> claimList, DateTime expiration )
@@ -86,25 +78,28 @@ namespace Api.SRVs
                 }
                 return answer;
             }
-            throw new Exception(Errors.unknown_error);
+            throw new Exception(Errors.UnknownError);
         }
 
 
         
-        public async Task<List<Web_User>> usersByWebLink(string link)
+        public async Task<List<WebUser>> usersByWebLink(string link)
         {
+            List<WebUser> users = null;
             if (!string.IsNullOrWhiteSpace(link))
             {
                 Web site = await _context.Db_Webs
                     .Include(e => e.users)
                     .ThenInclude(e => e.Articles)
                     .Where(e => e.Site_Link == link)
-                    .SingleAsync();
+                    .FirstOrDefaultAsync();
 
-                return site.users;
+                if (site != null)
+                {
+                    users = site.users;
+                }
             }
-
-            throw new Exception(Errors.unknown_error);
+            return users;
         }
     }
 }

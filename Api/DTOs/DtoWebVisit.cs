@@ -2,7 +2,7 @@ using System;
 
 namespace Api.DTOs
 {
-    public class DTO_Web_Visit
+    public class DtoWebVisit
     {
         public string Ip_Addr { get; set; }
         public DateTime Visit_Date { get; set; }

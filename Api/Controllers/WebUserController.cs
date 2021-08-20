@@ -22,10 +22,10 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebUserController:Controller
     {
-        private readonly Service_Web_User _webUserService;
+        private readonly ServiceWebUser _webUserService;
         private readonly IConfiguration _configuration;
 
-        public WebUserController(Service_Web_User webUserService, IConfiguration configuration)
+        public WebUserController(ServiceWebUser webUserService, IConfiguration configuration)
         {
             _webUserService = webUserService;
             _configuration = configuration;
@@ -33,7 +33,7 @@ namespace Api.Controllers
         
         
         [HttpPost("register")]
-        public async Task<ActionResult<DTO_Web_AuthAnswer>> Register([FromHeader] DTO_Web_User userToCreate)
+        public async Task<ActionResult<DtoWebAuthAnswer>> Register([FromHeader] DtoWebUser userToCreate)
         {
             if (userToCreate != null)
             {
@@ -41,13 +41,13 @@ namespace Api.Controllers
                 {
                     if (!await _webUserService.userExist(userToCreate))
                     {
-                        Web_User user_created = await _webUserService.createUser(userToCreate);
+                        WebUser user_created = await _webUserService.createUser(userToCreate);
 
                         if (user_created != null)
                         {
                             try
                             {
-                                DTO_Web_AuthAnswer answer = _webUserService.createUserJWT(userToCreate.Email);
+                                DtoWebAuthAnswer answer = _webUserService.createUserJWT(userToCreate.Email);
                                 return Ok(answer);
                             }
                             catch (Exception e)
@@ -56,32 +56,32 @@ namespace Api.Controllers
                                 return BadRequest(e.Message);
                             }
                         }
-                        return new BadRequestObjectResult(Errors.unknown_error);
+                        return new BadRequestObjectResult(Errors.UnknownError);
                     }
                     return new BadRequestObjectResult(Errors.emailExist(userToCreate.Email));
                 }
             }
-            return new BadRequestObjectResult(Errors.unknown_error);
+            return new BadRequestObjectResult(Errors.UnknownError);
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<DTO_Web_AuthAnswer>> Login([FromBody]DTO_Login creds)
+        public async Task<ActionResult<DtoWebAuthAnswer>> Login([FromBody]DtoLogin creds)
         {
             Console.WriteLine(_configuration["ApiConnection_Prod"]);
             if (creds != null)
             {
                 try
                 {
-                    Web_User userlogin = await _webUserService.userLogin(creds);
+                    WebUser userlogin = await _webUserService.userLogin(creds);
 
                     if ( userlogin != null)
                     {
-                        DTO_Web_AuthAnswer answer = _webUserService.createUserJWT(userlogin.Email);
+                        DtoWebAuthAnswer answer = _webUserService.createUserJWT(userlogin.Email);
                         return Ok(answer);
                     }
 
-                    return new BadRequestObjectResult(Errors.user_not_authorized);
+                    return new BadRequestObjectResult(Errors.UserNotAuthorized);
                 }
                 catch (Exception e)
                 {
@@ -91,17 +91,17 @@ namespace Api.Controllers
 ;
             }
 
-            return new BadRequestObjectResult(Errors.unknown_error);
+            return new BadRequestObjectResult(Errors.UnknownError);
         }
 
         [HttpGet("{blogLink}")]
-        public async Task<ActionResult<List<DTO_Web_User>>> getUsersByBlogLink(string blogLink)
+        public async Task<ActionResult<List<DtoWebUser>>> getUsersByBlogLink(string blogLink)
         {
             if (!string.IsNullOrWhiteSpace(blogLink))
             {
                 return await _webUserService.get_DTO_Users_By_BlogLink(blogLink);
             }
-            return new BadRequestObjectResult(Errors.unknown_error);
+            return new BadRequestObjectResult(Errors.UnknownError);
         }
     }
 }

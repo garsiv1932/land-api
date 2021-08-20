@@ -15,20 +15,20 @@ namespace Api.Utilities
         }
 
         private static MapperConfiguration config = new MapperConfiguration(cfg => { 
-            cfg.CreateMap<DTO_Web_Article, Web_Article>();
-            cfg.CreateMap<Web_Article,DTO_Web_Article>();
+            cfg.CreateMap<DtoWebArticle, WebArticle>();
+            cfg.CreateMap<WebArticle,DtoWebArticle>();
             
-            cfg.CreateMap<DTO_Web, Web>();
-            cfg.CreateMap<Web,DTO_Web >();
+            cfg.CreateMap<DtoWeb, Web>();
+            cfg.CreateMap<Web,DtoWeb >();
             
-            cfg.CreateMap<DTO_Web_Article_Comment, Web_Article_Comment>();
-            cfg.CreateMap<Web_Article_Comment,DTO_Web_Article_Comment>();
+            cfg.CreateMap<DtoWebArticleComment, WebArticleComment>();
+            cfg.CreateMap<WebArticleComment,DtoWebArticleComment>();
             
-            cfg.CreateMap<Web_User, DTO_Web_User>();
-            cfg.CreateMap<DTO_Web_User,Web_User>();
+            cfg.CreateMap<WebUser, DtoWebUser>();
+            cfg.CreateMap<DtoWebUser,WebUser>();
 
-            cfg.CreateMap<DTO_Web_Visit, Web_Visit>();
-            cfg.CreateMap<Web_Visit,DTO_Web_Visit>();
+            cfg.CreateMap<DtoWebVisit, WebVisit>();
+            cfg.CreateMap<WebVisit,DtoWebVisit>();
         });
 
         public static Mapper mapper { get; set; } = new(config);

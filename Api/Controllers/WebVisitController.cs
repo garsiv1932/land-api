@@ -16,21 +16,21 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebVisitController : Controller
     {
-        private readonly Service_Web_Visit _serviceWebVisit;
+        private readonly ServiceVisit _serviceVisit;
 
-        public WebVisitController(Service_Web_Visit serviceWebVisit)
+        public WebVisitController(ServiceVisit serviceVisit)
         {
-            _serviceWebVisit = serviceWebVisit;
+            _serviceVisit = serviceVisit;
         }
         
         [HttpPost]
-        public async Task<ActionResult> postVisit([FromHeader] DTO_Web_Visit visit)
+        public async Task<ActionResult> postVisit([FromHeader] DtoWebVisit visit)
         {
             if (visit != null)
             {
                 try
                 {
-                    await _serviceWebVisit.addVisit(visit);
+                    await _serviceVisit.addVisit(visit);
                     return Ok(visit);
                 }
                 catch (Exception e)
@@ -41,17 +41,17 @@ namespace Api.Controllers
                 
             }
 
-            return BadRequest(Errors.unknown_error);
+            return BadRequest(Errors.UnknownError);
         }
 
         [HttpGet("ipAddr")]
-        public async Task<ActionResult<List<DTO_Web_Visit>>> getVisitsByIpAddr(string ipAddr)
+        public async Task<ActionResult<List<DtoWebVisit>>> getVisitsByIpAddr(string ipAddr)
         {
             if (!string.IsNullOrWhiteSpace(ipAddr))
             {
                 try
                 {
-                    List<DTO_Web_Visit> visits= await _serviceWebVisit.getVisitsByIpAddr(ipAddr);
+                    List<DtoWebVisit> visits= await _serviceVisit.getVisitsByIpAddr(ipAddr);
                     return visits;
                 }
                 catch (Exception e)
@@ -60,18 +60,18 @@ namespace Api.Controllers
                     return BadRequest(e.Message);
                 }
             }
-            return BadRequest(Errors.unknown_error);
+            return BadRequest(Errors.UnknownError);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DTO_Web_Visit>>> getVisitsByDate(DateTime date)
+        public async Task<ActionResult<List<DtoWebVisit>>> getVisitsByDate(DateTime date)
         {
             if (!(date > DateTime.Today))
             {
-                List<DTO_Web_Visit> visits = await _serviceWebVisit.getDtoWebVisitsByDate(date);
+                List<DtoWebVisit> visits = await _serviceVisit.getDtoWebVisitsByDate(date);
             }
 
-            return BadRequest(Errors.date_incorrect);
+            return BadRequest(Errors.DateIncorrect);
         }
 
 

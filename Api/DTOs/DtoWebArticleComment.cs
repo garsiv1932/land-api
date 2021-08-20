@@ -2,7 +2,7 @@ using System;
 
 namespace Api.DTOs
 {
-    public class DTO_Web_Article_Comment
+    public class DtoWebArticleComment
     {
         //public int Article_Id { get; set; }
         //public DTO_Blog_Article Article { get; set; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.DTOs
 {
-    public class DTO_Web_User
+    public class DtoWebUser
     {
         [Required]
         public string Password { get; set; }

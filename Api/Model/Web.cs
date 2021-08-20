@@ -11,25 +11,25 @@ namespace Api.Model
         public string Secret { get; set; }
 
 
-        public List<Web_User> users { get; set; }
+        public List<WebUser> users { get; set; }
         
 
         public Web( string pName, string pSiteLink)
         {
             Site_Link = pSiteLink;
             Name = pName;
-            users = new List<Web_User>();
+            users = new List<WebUser>();
         }
 
         public Web()
         {
-            users = new List<Web_User>();
+            users = new List<WebUser>();
         }
 
         public Web(string link)
         {
             Site_Link = link;
-            users = new List<Web_User>();
+            users = new List<WebUser>();
         }
     }
 }

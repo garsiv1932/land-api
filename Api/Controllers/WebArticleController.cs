@@ -18,51 +18,71 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebArticleController : Controller
     {
-        private readonly Service_Web_Article _serviceWebArticle;
+        private readonly ServiceArticle _serviceArticle;
+        private readonly ServiceLogs _serviceLogs;
 
-        public WebArticleController(Service_Web_Article serviceWebArticle)
+        public WebArticleController(ServiceArticle serviceArticle, ServiceLogs serviceLogs)
         {
-            _serviceWebArticle = serviceWebArticle;
+            _serviceArticle = serviceArticle;
+            _serviceLogs = serviceLogs;
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<DTO_Web_Article>>> GetWebArticles([FromHeader] string web_link)
-            {
+        public async Task<ActionResult<List<DtoWebArticle>>> GetWebArticles([FromHeader] string web_link)
+        {
+            ActionResult action = new BadRequestObjectResult(Errors.WrongAttributes);
             if (!string.IsNullOrWhiteSpace(web_link))
             {
-                List<DTO_Web_Article> entries = new();
-                entries = await _serviceWebArticle.get_DTO_Articles_ByLink(HttpUtility.UrlDecode(web_link));
-                if (entries == null)
+                try
                 {
-                    return NotFound();
+                    List<DtoWebArticle> entries = new();
+                    entries = await _serviceArticle.getDtoArticlesByLink(HttpUtility.UrlDecode(web_link));
+                    if (entries == null)
+                    {
+                        action = new NotFoundResult();
+                    }
+                    else
+                    {
+                        action = Ok(entries);                        
+                    }
                 }
-                return entries;
+                catch (Exception e)
+                {
+                    _serviceLogs.AddExcepcion(e.Message, "WebArticleController", "getDtoArticlesByLink","WebArticles");
+                    action = BadRequest(e.Message);
+                }
             }
-
-            return BadRequest(Errors.wrong_attributes);
+            return action;
         }
 
         [HttpGet("cantidad")]
-        public async Task<ActionResult<int>> getCantidadArticulos([FromHeader] string link)
+        public async Task<ActionResult<int>> getAmountArticles([FromHeader] string link)
         {
+            ActionResult result = new BadRequestObjectResult(Errors.UnknownError); 
             if (!string.IsNullOrWhiteSpace(link))
             {
-                int cantidadArticulos = await _serviceWebArticle.cantidadArticulos(link);
-                return cantidadArticulos;                
+                try
+                {
+                    int cantidadArticulos = await _serviceArticle.cantidadArticulos(link);
+                    result = Ok(cantidadArticulos);                
+                }
+                catch (Exception e)
+                {
+                    result = new NotFoundResult();
+                }
             }
-
-            return BadRequest(Errors.element_not_found);
+            return result;
         }
 
         [HttpGet("article_link")]
-        public async Task<ActionResult<List<DTO_Web_Article_Comment>>> getArticleComments([FromHeader] string articleLink)
+        public async Task<ActionResult<List<DtoWebArticleComment>>> getArticleComments([FromHeader] string articleLink)
         {
-            if (await _serviceWebArticle.articleExist(articleLink))
+            if (await _serviceArticle.articleExist(articleLink))
             {
-                List<DTO_Web_Article_Comment> Comments = await _serviceWebArticle.getCommentsByArticleID(articleLink);
+                List<DtoWebArticleComment> Comments = await _serviceArticle.getCommentsByArticleID(articleLink);
                 return Comments;
             }
-            return BadRequest(Errors.element_not_found);
+            return BadRequest(Errors.ElementNotFound);
         }
     }
 }

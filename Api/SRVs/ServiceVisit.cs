@@ -9,28 +9,27 @@ using Api.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Services.SRVs;
 
 namespace Api.SRVs
 {
-    public class Service_Web_Visit:Service
+    public class ServiceVisit:Service
     {
-        public Service_Web_Visit(ApiContext context, IConfiguration configuration):base(context, configuration)
+        public ServiceVisit(ApiContext context, IConfiguration configuration):base(context, configuration)
         {
             
         }
 
-        public Service_Web_Visit()
+        public ServiceVisit()
         {
             
         }
-        public async Task<bool> addVisit(DTO_Web_Visit pVisit)
+        public async Task<bool> addVisit(DtoWebVisit pVisit)
         {
             if (pVisit != null)
             {
                 try
                 {
-                    Web_Visit newVisit = Utls.mapper.Map<Web_Visit>(pVisit);
+                    WebVisit newVisit = Utls.mapper.Map<WebVisit>(pVisit);
                     _context.Db_Web_Visit.Add(newVisit);
                     int result = await _context.SaveChangesAsync();
                 }
@@ -41,20 +40,20 @@ namespace Api.SRVs
                 }
             }
 
-            throw new Exception(Errors.unknown_error);
+            throw new Exception(Errors.UnknownError);
         }
 
-        public async Task<List<DTO_Web_Visit>> getVisitsByIpAddr(string ipAddr)
+        public async Task<List<DtoWebVisit>> getVisitsByIpAddr(string ipAddr)
         {
-            List<DTO_Web_Visit> visits = null;
+            List<DtoWebVisit> visits = null;
             if (!string.IsNullOrWhiteSpace(ipAddr))
             {
                 try
                 {
-                    List<Web_Visit> visitsSearched = 
-                        await _context.Db_Web_Visit.Where(e => e.Ip_Addr == ipAddr).ToListAsync();
+                    List<WebVisit> visitsSearched = 
+                        await _context.Db_Web_Visit.Where(e => e.IpAddress == ipAddr).ToListAsync();
 
-                    visits = Utls.mapper.Map<List<Web_Visit>, List<DTO_Web_Visit>>(visitsSearched);
+                    visits = Utls.mapper.Map<List<WebVisit>, List<DtoWebVisit>>(visitsSearched);
                     return visits;
                 }
                 catch (Exception e)
@@ -63,22 +62,22 @@ namespace Api.SRVs
                     throw new Exception(e.Message);
                 }
             }
-            throw new Exception(Errors.unknown_error);
+            throw new Exception(Errors.UnknownError);
         }
         
-        public async Task<List<DTO_Web_Visit>> getVisitsByIpAddr(DateTime date)
+        public async Task<List<DtoWebVisit>> getVisitsByIpAddr(DateTime date)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<DTO_Web_Visit>> getDtoWebVisitsByDate(DateTime date)
+        public async Task<List<DtoWebVisit>> getDtoWebVisitsByDate(DateTime date)
         {
             if (!(date > DateTime.Today))
             {
                 try
                 {
-                    List<Web_Visit> visits = await getVisitsByDate(date);
-                    return Utls.mapper.Map<List<Web_Visit> , List<DTO_Web_Visit>>(visits);
+                    List<WebVisit> visits = await getVisitsByDate(date);
+                    return Utls.mapper.Map<List<WebVisit> , List<DtoWebVisit>>(visits);
                 }
                 catch (Exception e)
                 {
@@ -86,13 +85,13 @@ namespace Api.SRVs
                     throw;
                 }
             }
-            throw new Exception(Errors.date_incorrect);
+            throw new Exception(Errors.DateIncorrect);
         }
         
-        public async Task<List<Web_Visit>> getVisitsByDate(DateTime date)
+        public async Task<List<WebVisit>> getVisitsByDate(DateTime date)
         {
-            List<Web_Visit> visits = 
-                await _context.Db_Web_Visit.Where(e => (e.Visit_Date.DayOfYear == date.DayOfYear)).ToListAsync();
+            List<WebVisit> visits = 
+                await _context.Db_Web_Visit.Where(e => (e.VisitDate.DayOfYear == date.DayOfYear)).ToListAsync();
             return visits;
         }
         

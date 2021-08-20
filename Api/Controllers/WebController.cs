@@ -19,10 +19,10 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebController : Controller
     {
-        private readonly Service_Web _serviceWeb;
+        private readonly ServiceWeb _serviceWeb;
 
 
-        public WebController(Service_Web serviceWeb)
+        public WebController(ServiceWeb serviceWeb)
         {
             _serviceWeb = serviceWeb;
         }
@@ -36,9 +36,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("web_link")]
-        public async Task<ActionResult<DTO_Web>> GetBlogByLink([FromHeader] string web_link)
+        public async Task<ActionResult<DtoWeb>> GetBlogByLink([FromHeader] string web_link)
         {
-            DTO_Web entries = new();
+            DtoWeb entries = new();
             entries = await _serviceWeb.getBlogsByLink(web_link);
             if (entries == null)
             {
@@ -50,9 +50,9 @@ namespace Api.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<DTO_Web>> GetBlogs()
+        public async Task<ActionResult<DtoWeb>> GetBlogs()
         {
-            DTO_Web entries = new();
+            DtoWeb entries = new();
             entries = await _serviceWeb.getBlogs();
             if (entries == null)
             {
@@ -63,13 +63,13 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("jwt-site")]
-        public async Task<ActionResult<DTO_Web_AuthAnswer>> CreateNewWebJWT([FromHeader] string web_link)
+        public async Task<ActionResult<DtoWebAuthAnswer>> CreateNewWebJWT([FromHeader] string web_link)
         {
             if (!string.IsNullOrWhiteSpace(web_link))
             {
                 try
                 {
-                    DTO_Web_AuthAnswer authAnswer = await _serviceWeb.AddJwtToSite(web_link);
+                    DtoWebAuthAnswer authAnswer = await _serviceWeb.AddJwtToSite(web_link);
                     return authAnswer;
                 }
                 catch (Exception e)
@@ -79,7 +79,7 @@ namespace Api.Controllers
                 }
 
             }
-            return BadRequest(Errors.unknown_error);
+            return BadRequest(Errors.UnknownError);
         }
     }
 }

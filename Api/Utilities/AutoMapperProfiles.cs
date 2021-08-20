@@ -8,12 +8,12 @@ namespace Api.Utilities
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Web,DTO_Web >();
-            CreateMap<DTO_Web, Web>();
-            CreateMap<DTO_Web_Article, Web_Article>();
-            CreateMap<DTO_Web_Article_Comment, Web_Article_Comment>();
-            CreateMap<Web,DTO_Web >();
-            CreateMap<Web_Article,DTO_Web_Article>();
+            CreateMap<Web,DtoWeb >();
+            CreateMap<DtoWeb, Web>();
+            CreateMap<DtoWebArticle, WebArticle>();
+            CreateMap<DtoWebArticleComment, WebArticleComment>();
+            CreateMap<Web,DtoWeb >();
+            CreateMap<WebArticle,DtoWebArticle>();
         }
     }
 }

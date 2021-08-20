@@ -8,10 +8,10 @@ namespace Api.Context
 {
     public class DbInitializer
     {
-        private readonly Service_Web _serviceWeb;
+        private readonly ServiceWeb _serviceWeb;
         private readonly ApiContext _context;
 
-        public DbInitializer(Service_Web serviceWeb,ApiContext context)
+        public DbInitializer(ServiceWeb serviceWeb,ApiContext context)
         {
             _serviceWeb = serviceWeb;
             _context = context;
@@ -25,50 +25,50 @@ namespace Api.Context
 
                 llorachdevs.Secret = _serviceWeb.TokenCreator(llorachdevs.Site_Link);
 
-                Web_User_Role admin_role = new Web_User_Role(DateTime.Now,"ADMIN");
-                Web_User_Role user_role = new Web_User_Role(DateTime.Now,"USER");
+                WebUserRole admin_role = new WebUserRole("ADMIN");
+                WebUserRole user_role = new WebUserRole("USER");
 
                 DateTime pablo_admin_birthday = new DateTime(1984,11,03);
 
                 
-                Web_User pablo_admin = new Web_User("PABLO", "ENRIQUE", "LLORACH", "PAZ", "llorach.pablo@llorachdevs.com", "llorach.pablo@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211845", llorachdevs, admin_role);
-                Web_User enrique_user = new Web_User("ENRIQUE", "PAZ", "", "", "enrique.paz@llorachdevs.com", "enrique.paz@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211846", llorachdevs, user_role);
+                WebUser pablo_admin = new WebUser("PABLO", "ENRIQUE", "LLORACH", "PAZ", "llorach.pablo@llorachdevs.com", "llorach.pablo@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211845", llorachdevs, admin_role);
+                WebUser enrique_user = new WebUser("ENRIQUE", "PAZ", "", "", "enrique.paz@llorachdevs.com", "enrique.paz@llorachdevs.com", pablo_admin_birthday, "13aBr2009", "+59891211846", llorachdevs, user_role);
                 
-                Web_Article formik = new();
-                formik.Article_Link = "https://garsiv1932.github.io/formik/";
+                WebArticle formik = new();
+                formik.ArticleLink = "https://garsiv1932.github.io/formik/";
                 formik.Image = "https://www.llorachdevs.com/static/media/formik.1abe3c8d.png";
                 formik.Tittle = "Creando Formularios con Formik";
                 formik.User = pablo_admin;
-                formik.Blog_User_Email = pablo_admin.Email;
+                formik.UserEmail = pablo_admin.Email;
 
-                Web_Article nagios = new();
-                nagios.Article_Link = "https://garsiv1932.github.io/nagios-mikrotik-ssh/";
+                WebArticle nagios = new();
+                nagios.ArticleLink = "https://garsiv1932.github.io/nagios-mikrotik-ssh/";
                 nagios.Image = "https://www.llorachdevs.com/static/media/Dibujo.f498333c.jpg";
                 nagios.Tittle = "Alertas de tus Mikrotiks en Nagios";
                 nagios.User = pablo_admin;
-                nagios.Blog_User_Email = pablo_admin.Email;
+                nagios.UserEmail = pablo_admin.Email;
 
-                Web_Article ipmi = new();
-                ipmi.Article_Link = "https://garsiv1932.github.io/nagios-ipmi/";
+                WebArticle ipmi = new();
+                ipmi.ArticleLink = "https://garsiv1932.github.io/nagios-ipmi/";
                 ipmi.Image = "https://www.llorachdevs.com/static/media/IPMI.6975eb1c.jpg";
                 ipmi.User = pablo_admin;
-                ipmi.Blog_User_Email = pablo_admin.Email;
-                ipmi.Publish_Date = DateTime.Now.AddYears(-1);
+                ipmi.UserEmail = pablo_admin.Email;
+                ipmi.PublishDate = DateTime.Now.AddYears(-1);
                 ipmi.Tittle = "Alertas del Hardware de tu server mediante IPMI";
                 
-                Web_Article_Comment ipmi_comment_uno = new Web_Article_Comment();
+                WebArticleComment ipmi_comment_uno = new WebArticleComment();
                 ipmi_comment_uno.User = enrique_user;
-                ipmi_comment_uno.User_Email = enrique_user.Email;
+                ipmi_comment_uno.UserEmail = enrique_user.Email;
                 ipmi_comment_uno.Comment = "Muy bueno";
                 ipmi_comment_uno.Published = DateTime.Now.AddDays(-3);
-                ipmi_comment_uno.Ip_Address = "192.168.0.1";
+                ipmi_comment_uno.IpAddress = "192.168.0.1";
                 
-                Web_Article_Comment ipmi_comment_dos = new Web_Article_Comment();
+                WebArticleComment ipmi_comment_dos = new WebArticleComment();
                 ipmi_comment_dos.User = enrique_user;
-                ipmi.Blog_User_Email = enrique_user.Email;
+                ipmi.UserEmail = enrique_user.Email;
                 ipmi_comment_dos.Comment = "Una porqueria";
                 ipmi_comment_dos.Published = DateTime.Now.AddDays(-5);
-                ipmi_comment_dos.Ip_Address = "192.168.0.10";
+                ipmi_comment_dos.IpAddress = "192.168.0.10";
 
                 ipmi.Comments.Add(ipmi_comment_uno);
                 ipmi.Comments.Add(ipmi_comment_dos);

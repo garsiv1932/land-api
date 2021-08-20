@@ -13,27 +13,27 @@ using Microsoft.Extensions.Configuration;
 
 namespace Api.SRVs
 {
-    public class Service_Web:Service
+    public class ServiceWeb:Service
     {
-        public Service_Web(ApiContext context, IConfiguration configuration) : base(context, configuration)
+        public ServiceWeb(ApiContext context, IConfiguration configuration) : base(context, configuration)
         {
         }
 
-        public Service_Web()
+        public ServiceWeb()
         {
             
         }
 
-        public async Task<DTO_Web> getBlogsByLink(string webLink)
+        public async Task<DtoWeb> getBlogsByLink(string webLink)
         {
             Web webSearched = await _context.Db_Webs.FirstOrDefaultAsync(e => e.Site_Link == webLink);
-            return Utls.mapper.Map<DTO_Web>(webSearched);
+            return Utls.mapper.Map<DtoWeb>(webSearched);
         }
         
-        public async Task<DTO_Web> getBlogs()
+        public async Task<DtoWeb> getBlogs()
         {
             Web webSearched = await _context.Db_Webs.FirstOrDefaultAsync();
-            var blogs = Utls.mapper.Map<DTO_Web>(webSearched);
+            var blogs = Utls.mapper.Map<DtoWeb>(webSearched);
             return blogs;
 
         }
@@ -41,7 +41,7 @@ namespace Api.SRVs
         /*
          Sites has their own JWT Key for administragion purposes 
          */
-        public async Task<DTO_Web_AuthAnswer>  AddJwtToSite(string website)
+        public async Task<DtoWebAuthAnswer>  AddJwtToSite(string website)
         {
             if (!string.IsNullOrWhiteSpace(website))
             {
@@ -60,7 +60,7 @@ namespace Api.SRVs
                try
                {
                    await _context.SaveChangesAsync();
-                   return new DTO_Web_AuthAnswer()
+                   return new DtoWebAuthAnswer()
                    {
                        Token = securityToken,
                        Expiration = expirationDate

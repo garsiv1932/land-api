@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Api.DTOs
 {
-    public class DTO_Web_Article
+    public class DtoWebArticle
     {
         // public DTO_Blog_User User { get; set; }
         //public int Blog_User_ID { get; set; }
@@ -15,13 +15,13 @@ namespace Api.DTOs
         public int Likes { get; set; }
         public int Visit_Count { get;set; }
         // public List<DTO_Blog_Visit> Visits { get; set; }
-        public List<DTO_Web_Article_Comment> Comments { get; set; }
-        public DTO_Web_User User { get; set; }
+        public List<DtoWebArticleComment> Comments { get; set; }
+        public DtoWebUser User { get; set; }
 
 
-        public DTO_Web_Article()
+        public DtoWebArticle()
         {
-            Comments = new List<DTO_Web_Article_Comment>();
+            Comments = new List<DtoWebArticleComment>();
         }
     }
     
