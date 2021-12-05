@@ -1,4 +1,8 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
+  &lt;Assembly Path="/home/garsiv/.nuget/packages/bcrypt.net-next/4.0.2/lib/net5.0/BCrypt.Net-Next.dll" /&gt;
+  &lt;Assembly Path="/usr/share/dotnet/packs/Microsoft.AspNetCore.App.Ref/5.0.0/ref/net5.0/Microsoft.Extensions.Configuration.Abstractions.dll" /&gt;
+&lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=29355140_002Dde30_002D42e0_002Da62e_002Dda7541519801/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from ServiceArticleTest.cs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebArticleControllerTest&lt;/TestId&gt;
@@ -7,10 +11,21 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4de91612_002Dad68_002D449d_002Dbc62_002D85177c1c72e0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="getAmountArticlesOk #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebArticleControllerTest.getAmountArticlesOk&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebControllerTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d58f10ed_002D3096_002D4d30_002D9e5c_002D0427724cd0d1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="getAmountArticlesOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d58f10ed_002D3096_002D4d30_002D9e5c_002D0427724cd0d1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="getAmountArticlesOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebArticleControllerTest&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebControllerTest&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebUserControllerTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=efdb084c_002Dfc19_002D4d52_002D8db6_002Da49327a1a4b5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateNewWebJwtOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebControllerTest.CreateNewWebJwtOk&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebControllerTest.CreateNewWebJwtError&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebUserControllerTest&lt;/TestId&gt;
+    &lt;TestId&gt;MSTest::0BBD070A-0B57-44FC-9763-377FEE288FA0::net5.0::Api.Tests.UnitTests.WebControllerTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

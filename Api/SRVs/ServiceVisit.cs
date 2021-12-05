@@ -18,11 +18,7 @@ namespace Api.SRVs
         {
             
         }
-
-        public ServiceVisit()
-        {
-            
-        }
+        
         public async Task<bool> addVisit(DtoWebVisit pVisit)
         {
             if (pVisit != null)

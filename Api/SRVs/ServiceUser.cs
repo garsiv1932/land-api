@@ -15,8 +15,11 @@ namespace Api.SRVs
 {
     public class ServiceWebUser:Service
     {
-        public ServiceWebUser(ApiContext context, IConfiguration configuration):base(context, configuration)
+        private readonly ServiceWeb _serviceWeb;
+
+        public ServiceWebUser(ApiContext context, IConfiguration configuration, ServiceWeb serviceWeb):base(context, configuration)
         {
+            _serviceWeb = serviceWeb;
         }
 
         public ServiceWebUser()
@@ -27,18 +30,20 @@ namespace Api.SRVs
         public async Task<WebUser> createUser(DtoWebUser userDTO)
         {
             WebUser user = Utls.mapper.Map<WebUser>(userDTO);
+            Web web = await _serviceWeb.getWebByLink(userDTO.WebLink);
+            
             var user_created = await _context.DbWebUser.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;        
         }
 
 
-        public async Task<bool> userExist(DtoWebUser user)
+        public async Task<bool> userExist(string userEmail)
         {
             bool exist = false;
-            if (user != null)
+            if (!string.IsNullOrWhiteSpace(userEmail))
             {
-                WebUser user_exist = await _context.DbWebUser.AsQueryable().Where(e => e.Email== user.Email).SingleAsync();
+                WebUser user_exist = await _context.DbWebUser.AsQueryable().Where(e => e.Email== userEmail).FirstOrDefaultAsync();
                 if (user_exist != null)
                 {
                     exist = true;
@@ -48,7 +53,7 @@ namespace Api.SRVs
             return exist;
         }
 
-        public DtoWebAuthAnswer createUserJWT(string email)
+        public AuthAnswer createUserJWT(string email)
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
@@ -60,7 +65,7 @@ namespace Api.SRVs
 
                 string tokenJWT = TokenConstructor(claims, expirationDate);
 
-                DtoWebAuthAnswer answer = new DtoWebAuthAnswer()
+                AuthAnswer answer = new AuthAnswer()
                 {
                     Token = tokenJWT,
                     Expiration = expirationDate
@@ -86,7 +91,6 @@ namespace Api.SRVs
             WebUser user_login = null;
             if (creds != null)
             {
-                
                 WebUser aux_user_login = await _context.DbWebUser.AsQueryable().Where(e => e.Email == creds.username).SingleAsync();
                 bool passverify = BCrypt.Net.BCrypt.Verify(creds.password, aux_user_login.PasswordHash);
                 if (aux_user_login != null && passverify)

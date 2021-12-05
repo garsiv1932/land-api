@@ -14,6 +14,11 @@ namespace Api.SRVs
 {
     public class ServiceArticle:Service
     {
+        public ServiceArticle(ApiContext context, IConfiguration configuration) : base(context, configuration)
+        {
+            
+        }
+        
         public async Task<List<DtoWebArticle>> getDtoArticlesByLink(string link)
         {
             List<DtoWebArticle> dtoArts = null;
@@ -35,6 +40,9 @@ namespace Api.SRVs
             }
             return dtoArts;
         }
+
+        
+
 
         private IEnumerable<WebArticle> getArtyclesFromUser(string userEmail)
         {
@@ -58,12 +66,6 @@ namespace Api.SRVs
         {
             
         }
-
-        public ServiceArticle(ApiContext context, IConfiguration configuration) : base(context, configuration)
-        {
-            
-        }
-
     
         public async Task<List<DtoWebArticleComment>> getCommentsByArticleID(string articleLink)
         {
@@ -108,5 +110,7 @@ namespace Api.SRVs
 
             throw new Exception(Errors.UnknownError);
         }
+
+
     }
 }

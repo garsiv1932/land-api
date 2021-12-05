@@ -23,52 +23,61 @@ namespace Api.Controllers
     public class WebUserController:Controller
     {
         private readonly ServiceWebUser _webUserService;
-        private readonly IConfiguration _configuration;
+        private readonly ServiceLogs _serviceLogs;
 
-        public WebUserController(ServiceWebUser webUserService, IConfiguration configuration)
+        public WebUserController(ServiceWebUser webUserService, ServiceLogs serviceLogs)
         {
             _webUserService = webUserService;
-            _configuration = configuration;
+            _serviceLogs = serviceLogs;
         }
-        
-        
+
+
         [HttpPost("register")]
-        public async Task<ActionResult<DtoWebAuthAnswer>> Register([FromHeader] DtoWebUser userToCreate)
+        public async Task<ActionResult<AuthAnswer>> Register([FromHeader] DtoWebUser webUser)
         {
-            if (userToCreate != null)
+            ActionResult action = new BadRequestObjectResult(Errors.UnknownError);
+            if (webUser != null)
             {
-                if (_webUserService.passwordValid(userToCreate.Password))
+                if (_webUserService.passwordValid(webUser.Password))
                 {
-                    if (!await _webUserService.userExist(userToCreate))
+                    if (!await _webUserService.userExist(webUser.UserName))
                     {
-                        WebUser user_created = await _webUserService.createUser(userToCreate);
+                        WebUser user_created = await _webUserService.createUser(webUser);
 
                         if (user_created != null)
                         {
                             try
                             {
-                                DtoWebAuthAnswer answer = _webUserService.createUserJWT(userToCreate.Email);
-                                return Ok(answer);
+                                AuthAnswer answer = _webUserService.createUserJWT(webUser.Email);
+                                action = Ok(answer);
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine(e);
-                                return BadRequest(e.Message);
+                                action = BadRequest(e.Message);
                             }
                         }
-                        return new BadRequestObjectResult(Errors.UnknownError);
+                        else
+                        {
+                            action = new BadRequestObjectResult(Errors.UnknownError);                            
+                        }
                     }
-                    return new BadRequestObjectResult(Errors.emailExist(userToCreate.Email));
+                    else
+                    {
+                        action = new ConflictObjectResult(Errors.emailExist(webUser.Email));                        
+                    }
+                }
+                else
+                {
+                    action = new BadRequestObjectResult(Errors.WrongAttributes);
                 }
             }
-            return new BadRequestObjectResult(Errors.UnknownError);
+            return action ;
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<DtoWebAuthAnswer>> Login([FromBody]DtoLogin creds)
+        public async Task<ActionResult<AuthAnswer>> Login([FromBody]DtoLogin creds)
         {
-            Console.WriteLine(_configuration["ApiConnection_Prod"]);
             if (creds != null)
             {
                 try
@@ -77,7 +86,7 @@ namespace Api.Controllers
 
                     if ( userlogin != null)
                     {
-                        DtoWebAuthAnswer answer = _webUserService.createUserJWT(userlogin.Email);
+                        AuthAnswer answer = _webUserService.createUserJWT(userlogin.Email);
                         return Ok(answer);
                     }
 

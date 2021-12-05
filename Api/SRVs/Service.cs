@@ -34,7 +34,7 @@ namespace Api.SRVs
 
         }
 
-        public async Task<List<WebUser>> getUsersByBlogLink([FromHeader] string blog_link)
+        public async Task<List<WebUser>> getUsersByBlogLink(string blog_link)
         {
             List<WebUser> response = null;
             if (!string.IsNullOrWhiteSpace(blog_link))

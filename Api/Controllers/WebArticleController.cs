@@ -27,23 +27,23 @@ namespace Api.Controllers
             _serviceLogs = serviceLogs;
         }
         
-        [HttpGet]
-        public async Task<ActionResult<List<DtoWebArticle>>> GetWebArticles([FromHeader] string web_link)
+        [HttpGet("getArticlesByLink")]
+        public async Task<ActionResult<List<DtoWebArticle>>> GetWebArticles([FromHeader] string link)
         {
             ActionResult action = new BadRequestObjectResult(Errors.WrongAttributes);
-            if (!string.IsNullOrWhiteSpace(web_link))
+            if (!string.IsNullOrWhiteSpace(link))
             {
                 try
                 {
                     List<DtoWebArticle> entries = new();
-                    entries = await _serviceArticle.getDtoArticlesByLink(HttpUtility.UrlDecode(web_link));
+                    entries = await _serviceArticle.getDtoArticlesByLink(HttpUtility.UrlDecode(link));
                     if (entries == null)
                     {
                         action = new NotFoundResult();
                     }
                     else
                     {
-                        action = Ok(entries);                        
+                        action = new OkObjectResult(entries);                        
                     }
                 }
                 catch (Exception e)

@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text;
 using Api.Context;
 using Api.SRVs;
@@ -6,7 +7,9 @@ using Api.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +56,6 @@ namespace Api
             al sistema fue firmada por nuestra aplicacion
             */
             
-            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer( options => options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -76,11 +78,24 @@ namespace Api
             
             services.AddControllers();
             
+            // services.Configure<ForwardedHeadersOptions>(options =>
+            // {
+            //     options.ForwardedHeaders =
+            //         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            // });
+            
+            // services.Configure<ForwardedHeadersOptions>(options =>
+            // {
+            //     options.KnownProxies.Add(IPAddress.Parse("202.61.227.108"));
+            // });
+            
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
             services.AddSwaggerGen();
 
             services.AddSwaggerGen(c =>
             {
+                //Esto tiene que ver con el nombrado de los titulos
+                // Referencia: https://rimdev.io/swagger-grouping-with-controller-name-fallback-using-swashbuckle-aspnetcore/
                 c.TagActionsBy(api =>
                 {
                     if (api.GroupName != null)
@@ -97,13 +112,16 @@ namespace Api
                     throw new InvalidOperationException("Unable to determine tag for endpoint.");
                 });
                 c.DocInclusionPredicate((name, api) => true); 
-                
+                //
                 
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+                
+                // Habilita las anotations en los metodos del controlador
+                // Referencia:https://medium.com/c-sharp-progarmming/configure-annotations-in-swagger-documentation-for-asp-net-core-api-8215596907c7
                 c.EnableAnnotations();
                 
             
-                //Configurando Swagger para que soporte JWT 
+                //Configurando Swagger para que soporte JWT
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -127,22 +145,26 @@ namespace Api
                     }
                 });
             });
+            // services.Configure<KestrelServerOptions>(
+            //     Configuration.GetSection("Kestrel"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            // app.UseForwardedHeaders(new ForwardedHeadersOptions
+            // {
+            //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            // });
+            // app.UseForwardedHeaders();
+            
             app.UseCors(e =>
             {
                 e.AllowAnyOrigin();
                 e.AllowAnyMethod();
                 e.AllowAnyHeader();
             });
-            if (_env.IsDevelopment())
-            {
 
-            }
-            
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             
@@ -156,6 +178,8 @@ namespace Api
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -9,6 +9,7 @@ namespace Api.Utilities
         public static string ElementNotFound { get; } = "El o los elementos buscados no se encuentran disponibles";
 
         public static string DateIncorrect { get; } = "Fecha Incorrecta";
+        public static string AlreadyExist { get; } = "Imposible crear, ya existe";
 
         public static string emailExist(string email)
         {

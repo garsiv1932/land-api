@@ -17,10 +17,12 @@ namespace Api.Controllers
     public class WebVisitController : Controller
     {
         private readonly ServiceVisit _serviceVisit;
+        private readonly ServiceLogs _serviceLogs;
 
-        public WebVisitController(ServiceVisit serviceVisit)
+        public WebVisitController(ServiceVisit serviceVisit,ServiceLogs serviceLogs)
         {
             _serviceVisit = serviceVisit;
+            _serviceLogs = serviceLogs;
         }
         
         [HttpPost]

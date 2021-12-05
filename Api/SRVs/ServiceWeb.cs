@@ -24,10 +24,15 @@ namespace Api.SRVs
             
         }
 
-        public async Task<DtoWeb> getBlogsByLink(string webLink)
+        public async Task<Web> getWebByLink(string webLink)
         {
-            Web webSearched = await _context.Db_Webs.FirstOrDefaultAsync(e => e.Site_Link == webLink);
-            return Utls.mapper.Map<DtoWeb>(webSearched);
+            Web result = null;
+            if (!string.IsNullOrWhiteSpace(webLink))
+            {
+                result = await _context.Db_Webs.FirstOrDefaultAsync(e => e.Site_Link == webLink);                
+            }
+
+            return result;
         }
         
         public async Task<DtoWeb> getBlogs()
@@ -35,14 +40,14 @@ namespace Api.SRVs
             Web webSearched = await _context.Db_Webs.FirstOrDefaultAsync();
             var blogs = Utls.mapper.Map<DtoWeb>(webSearched);
             return blogs;
-
         }
         
         /*
          Sites has their own JWT Key for administragion purposes 
          */
-        public async Task<DtoWebAuthAnswer>  AddJwtToSite(string website)
+        public async Task<AuthAnswer>  AddJwtToSite(string website)
         {
+            AuthAnswer response = null;
             if (!string.IsNullOrWhiteSpace(website))
             {
                 var claimList = new List<Claim>()
@@ -53,28 +58,21 @@ namespace Api.SRVs
                 DateTime expirationDate = DateTime.Now.AddYears(3);
                 string securityToken = TokenConstructor(claimList, expirationDate);
                 
-               Web web = await _context.Db_Webs.Where(e => e.Site_Link == website).SingleAsync();
-               
-               web.Secret = securityToken.ToString();
-               
-               try
+               Web web = await _context.Db_Webs.Where(e => e.Site_Link == website).FirstOrDefaultAsync();
+
+               if (web != null)
                {
+                   web.Secret = securityToken;                   
                    await _context.SaveChangesAsync();
-                   return new DtoWebAuthAnswer()
+                   
+                   response = new AuthAnswer()
                    {
                        Token = securityToken,
                        Expiration = expirationDate
                    };
                }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-                   throw new Exception(e.Message);
-               }
-
             }
-
-            return null;
+            return response;
         }
         
         public string TokenCreator(string website)
@@ -96,6 +94,18 @@ namespace Api.SRVs
             return website;
         }
 
-
+        public async Task<DtoWeb> getDtoWebByLink(string webLink)
+        {
+            DtoWeb result = null;
+            if (string.IsNullOrWhiteSpace(webLink))
+            {
+                Web searchedWeb = await getWebByLink(webLink);
+                if (searchedWeb != null)
+                {
+                    result = Utls.mapper.Map<DtoWeb>(searchedWeb);        
+                }
+            }
+            return result;
+        }
     }
 }

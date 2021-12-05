@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Api.Context;
 using Api.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Api.SRVs

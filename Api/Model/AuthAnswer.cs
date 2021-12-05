@@ -1,9 +1,8 @@
 using System;
-using System.IdentityModel.Tokens.Jwt;
 
-namespace Api.DTOs
+namespace Api.Model
 {
-    public class DtoWebAuthAnswer
+    public class AuthAnswer
     {
         public string Token { get; set; }
         public DateTime Expiration { get; set; }

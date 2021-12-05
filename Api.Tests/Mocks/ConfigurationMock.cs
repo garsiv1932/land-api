@@ -24,7 +24,7 @@ namespace Api.Tests.Mocks
 
         public string this[string key]
         {
-            get => throw new NotImplementedException();
+            get => key == "JwtKey" ? "Escuchas@4983#SabrinaMicaela@2009" : "";
             set => throw new NotImplementedException();
         }
     }
